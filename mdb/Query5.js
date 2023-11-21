@@ -7,16 +7,12 @@ async function main() {
     try {
         await client.connect();
         const database = client.db("ieeevisTweets");
-
-        // Create or get the users collection
         const usersCollection = database.collection("users");
         const tweetsCollection = database.collection("tweet");
-
-        // Extract unique users from the tweet collection
         const userPipeline = [
             {
                 $group: {
-                    _id: "$user.id_str", // Assuming user.id_str is the unique identifier
+                    _id: "$user.id_str", 
                     userDoc: { $first: "$user" }
                 }
             },
@@ -26,25 +22,22 @@ async function main() {
         ];
         const uniqueUsers = await tweetsCollection.aggregate(userPipeline).toArray();
         await usersCollection.insertMany(uniqueUsers);
-         // Drop the tweetsOnly collection if it exists
         const collections = await database.listCollections().toArray();
         const collectionNames = collections.map(c => c.name);
         if (collectionNames.includes("tweetsOnly")) {
             await database.collection("tweetsOnly").drop();
             console.log("Dropped the existing 'tweetsOnly' collection.");
         }
-        // Create or get the new tweetsOnly collection
         const tweetsOnlyCollection = database.collection("tweetsOnly");
 
-        // Iterate through the tweets and insert them into the new collection
         const tweetCursor = tweetsCollection.find();
         while (await tweetCursor.hasNext()) {
             const tweet = await tweetCursor.next();
             const modifiedTweet = {
                 ...tweet,
-                user_id: tweet.user.id_str // Reference to the user's ID
+                user_id: tweet.user.id_str 
             };
-            delete modifiedTweet.user; // Remove the embedded user document
+            delete modifiedTweet.user; 
             await tweetsOnlyCollection.insertOne(modifiedTweet);
         }
 

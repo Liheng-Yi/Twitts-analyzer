@@ -23,13 +23,9 @@ async function main() {
                 $limit: 1
             }
         ];
-
         const result = await tweets.aggregate(pipeline).toArray();
-        if (result.length > 0) {
-            console.log(`The person with the most tweets is ${result[0]._id} with ${result[0].tweetCount} tweets.`);
-        } else {
-            console.log("No data available to determine the person with the most tweets.");
-        }
+        console.log(`User's name: ${result[0]._id} number of tweets ${result[0].tweetCount}.`);
+
 
     } catch (e) {
         console.error(e);

@@ -31,7 +31,7 @@ async function main() {
         ];
 
         const topUsers = await tweets.aggregate(pipeline).toArray();
-        console.log("Top 10 people with the highest average retweets, who tweeted more than 3 times:");
+        console.log("Top 10 people:");
         topUsers.forEach(user => console.log(`${user._id}: ${user.avgRetweets} average retweets`));
 
     } catch (e) {

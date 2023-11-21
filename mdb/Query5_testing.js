@@ -14,7 +14,7 @@ async function main() {
         const userPipeline = [
             {
                 $group: {
-                    _id: "$user.id_str", // Assuming 'id_str' is a unique identifier for users
+                    _id: "$user.id_str", 
                     userDoc: { $first: "$user" }
                 }
             },
@@ -23,15 +23,7 @@ async function main() {
             }
         ];
 
-        const uniqueUsers = await tweetsCollection.aggregate(userPipeline).toArray();
-
-        // Insert unique users into the users collection
-        if(uniqueUsers.length > 0) {
-            await usersCollection.insertMany(uniqueUsers);
-            console.log(`Inserted ${uniqueUsers.length} unique users into the users collection.`);
-        } else {
-            console.log("No unique users found in tweets collection.");
-        }
+        
 
     } catch (e) {
         console.error(e);

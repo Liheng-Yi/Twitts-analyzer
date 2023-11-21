@@ -13,7 +13,7 @@ async function main() {
             retweeted_status: { $exists: false }
         };
         const count = await tweets.countDocuments(query);
-        console.log(`Number of tweets that are not retweets or replies: ${count}`);
+        console.log(`num of non-retweet: ${count}`);
     } catch (e) {
         console.error(e);
     } finally {
