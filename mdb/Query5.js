@@ -9,6 +9,7 @@ async function main() {
         const database = client.db("ieeevisTweets");
         const usersCollection = database.collection("users");
         const tweetsCollection = database.collection("tweet");
+        // get unique users
         const userPipeline = [
             {
                 $group: {
@@ -24,12 +25,14 @@ async function main() {
         await usersCollection.insertMany(uniqueUsers);
         const collections = await database.listCollections().toArray();
         const collectionNames = collections.map(c => c.name);
+        // if the tweetsOnly collection exists, drop it first
         if (collectionNames.includes("tweetsOnly")) {
             await database.collection("tweetsOnly").drop();
             console.log("Dropped the existing 'tweetsOnly' collection.");
         }
+        // create the tweetsOnly collection
         const tweetsOnlyCollection = database.collection("tweetsOnly");
-
+        
         const tweetCursor = tweetsCollection.find();
         while (await tweetCursor.hasNext()) {
             const tweet = await tweetCursor.next();
@@ -41,7 +44,7 @@ async function main() {
             await tweetsOnlyCollection.insertOne(modifiedTweet);
         }
 
-        console.log("Migration of user data and tweets completed.");
+        console.log("tweetsOnly collection completed");
 
     } catch (e) {
         console.error(e);
